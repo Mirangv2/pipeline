@@ -1,15 +1,14 @@
-pipeline{
+pipeline {
   agent none
-  stages{
-    stage('Build){
+  stages {
+    stage('Build') {
       agent any
-      options{
+      options {
         skipDefaultCheckout()
-        }
-      steps{
-        echo"Hello World"
+      }
+      steps {
+        echo "Hello World"
       }
     }
   }
 }
-    
