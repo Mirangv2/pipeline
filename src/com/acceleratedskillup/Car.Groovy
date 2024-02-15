@@ -1,13 +1,13 @@
 package com.acceleratedskillup;
 
-class Car{
+class Car {
   int doors;
   string model;
   string brand;
   def script
 
       Car(script){
-        this.script=script
+        this.script = script
         }
       void printoutCar(){
         script.echo "using script.echo"
