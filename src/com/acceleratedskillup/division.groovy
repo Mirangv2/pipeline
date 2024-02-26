@@ -1,5 +1,5 @@
 package com.acceleratedskillup;
 
-def add(firstNumber, secondNumber){
+def div(firstNumber, secondNumber){
   return firstNumber/secondNumber
 }
