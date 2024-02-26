@@ -19,46 +19,50 @@ pipeline {
             steps {
                 script {
                     // Perform arithmetic operations based on user input
-                    if (params.test_addition) {
-                        echo 'Running addition operation...'
-                        def add= new addition()
-                        println add.add(params.operand1.toInteger(),params.operand2.toInteger())
+                    when{
+                        expression{params.test_addition=='True'}
                     }
+                    echo 'Running addition operation...'
+                    def add= new addition()
+                    println add.add(params.operand1.toInteger(),params.operand2.toInteger())
                 }
             }
         }
         stage('Subtraction Operation'){
             steps{
                 script{
-                    if (params.test_subtraction) {
-                        echo 'Running subtraction operation...'
-                        def sub= new subtraction()
-                        println sub.sub(params.operand1.toInteger(),params.operand2.toInteger())
+                    when{
+                        expression{params.test_subtraction=='True'}
                     }
+                    echo 'Running subtraction operation...'
+                    def sub= new subtraction()
+                    println sub.sub(params.operand1.toInteger(),params.operand2.toInteger())
                 }
             }
         }
         stage('Multiplication Operation'){
             steps{
                 script{
-                    if (params.test_multiplication) {
-                        echo 'Running multiplication operation...'
-                        def mul= new Multiplication()
-                        println mul.mul(params.operand1.toInteger(),params.operand2.toInteger())
+                        when{
+                        expression{params.test_addition=='True'}
+                    }
+                    echo 'Running multiplication operation...'
+                    def mul= new Multiplication()
+                    println mul.mul(params.operand1.toInteger(),params.operand2.toInteger())
                     }
                 }
             }
-        }
         stage('Division Operation'){
             steps{
                 script{
-                    if (params.test_division) {
-                        echo 'Running division operation...'
-                        def div= new division()
-                        println div.div(params.operand1.toInteger(),params.operand2.toInteger())
+                    when{
+                        expression{params.test_addition=='True'}
+                    }
+                    echo 'Running division operation...'
+                    def div= new division()
+                    println div.div(params.operand1.toInteger(),params.operand2.toInteger())
                     }
                 }
             }
         }
     }
-}
