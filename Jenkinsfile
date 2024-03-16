@@ -8,13 +8,14 @@ pipeline {
         activeChoice(
             name: 'Offline Run',
             script: {
-                return [
-                    [name: 'SanityRun', description: 'Run Sanity tests'],
-                    [name: 'OfflineRun', description: 'Full Offline Run']
-                ]
+                // Assuming choices are defined elsewhere (e.g., environment variables)
+                def offlineRunOptions = env.OFFLINE_RUN_OPTIONS?.split(',') ?: []
+                return offlineRunOptions.collect { option ->
+                    [name: option, description: "Run ${option} tests"]
+                }
             },
-            filterable: true, // Optional: enable filtering choices
-            multiselect: true  // Enable multi-selection
+            filterable: true,
+            multiselect: true
         )
     }
 
