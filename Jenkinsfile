@@ -2,63 +2,90 @@
 
 // Import necessary functions from separate files
 import com.acceleratedskillup.*;
-pipeline {
-    agent any
-    
-    parameters {
-        booleanParam(name: 'test_addition', defaultValue: false, description: 'Run addition operation')
-        booleanParam(name: 'test_subtraction', defaultValue: false, description: 'Run subtraction operation')
-        booleanParam(name: 'test_multiplication', defaultValue: false, description: 'Run multiplication operation')
-        booleanParam(name: 'test_division', defaultValue: false, description: 'Run division operation')
-        string(name: 'operand1', defaultValue: '10', description: 'First operand')
-        string(name: 'operand2', defaultValue: '5', description: 'Second operand')
-    }
 
-    stages {
-        stage('Addition Operation') {
-            steps {
-                script {
-                    // Perform arithmetic operations based on user input
-                    if (params.test_addition) {
-                        echo 'Running addition operation...'
-                        def add= new addition()
-                        println add.add(params.operand1.toInteger(),params.operand2.toInteger())
-                    }
-                }
-            }
-        }
-        stage('Subtraction Operation'){
-            steps{
-                script{
-                    if (params.test_subtraction) {
-                        echo 'Running subtraction operation...'
-                        def sub= new subtraction()
-                        println sub.sub(params.operand1.toInteger(),params.operand2.toInteger())
-                    }
-                }
-            }
-        }
-        stage('Multiplication Operation'){
-            steps{
-                script{
-                    if (params.test_multiplication) {
-                        echo 'Running multiplication operation...'
-                        def mul= new Multiplication()
-                        println mul.mul(params.operand1.toInteger(),params.operand2.toInteger())
-                    }
-                }
-            }
-        }
-        stage('Division Operation'){
-            steps{
-                script{
-                    if (params.test_division) {
-                        echo 'Running division operation...'
-                        def div= new division()
-                        println div.div(params.operand1.toInteger(),params.operand2.toInteger())
-                    }
-                }
-            }
-        }
-    }
+properties([
+    parameters([
+        [$class: 'ChoiceParameter', 
+            choiceType: 'PT_SINGLE_SELECT', 
+            description: 'Select the Env Name from the Dropdown List', 
+            filterLength: 1, 
+            filterable: true, 
+            name: 'Env', 
+            randomName: 'choice-parameter-5631314439613978', 
+            script: [
+                $class: 'GroovyScript', 
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: false, 
+                    script: 
+                        'return[\'Could not get Env\']'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: false, 
+                    script: 
+                        'return["Dev","QA","Stage","Prod"]'
+                ]
+            ]
+        ], 
+        [$class: 'CascadeChoiceParameter', 
+            choiceType: 'PT_SINGLE_SELECT', 
+            description: 'Select the Server from the Dropdown List', 
+            filterLength: 1, 
+            filterable: true, 
+            name: 'Server', 
+            randomName: 'choice-parameter-5631314456178619', 
+            referencedParameters: 'Env', 
+            script: [
+                $class: 'GroovyScript', 
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: false, 
+                    script: 
+                        'return[\'Could not get Environment from Env Param\']'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: false, 
+                    script: 
+                        ''' if (Env.equals("Dev")){
+                                return["devaaa001","devaaa002","devbbb001","devbbb002","devccc001","devccc002"]
+                            }
+                            else if(Env.equals("QA")){
+                                return["qaaaa001","qabbb002","qaccc003"]
+                            }
+                            else if(Env.equals("Stage")){
+                                return["staaa001","stbbb002","stccc003"]
+                            }
+                            else if(Env.equals("Prod")){
+                                return["praaa001","prbbb002","prccc003"]
+                            }
+                        '''
+                ]
+            ]
+        ]
+    ])
+])
+
+pipeline {
+  environment {
+         vari = ""
+  }
+  agent any
+  stages {
+      stage ("Example") {
+        steps {
+         script{
+          echo 'Hello'
+          echo "${params.Env}"
+          echo "${params.Server}"
+          if (params.Server.equals("Could not get Environment from Env Param")) {
+              echo "Must be the first build after Pipeline deployment.  Aborting the build"
+              currentBuild.result = 'ABORTED'
+              return
+          }
+          echo "Crossed param validation"
+        } }
+      }
+  }
 }
