@@ -3,50 +3,32 @@
 // Import necessary functions from separate files
 import com.acceleratedskillup.*;
 
-properties([
-  parameters([
-    // Existing Environment parameter with cascading host selection
-    [
-      $class: 'ChoiceParameter',
-      choiceType: 'PT_SINGLE_SELECT',
-      name: 'Environment',
-      script: [
-        $class: 'ScriptlerScript',
-        scriptlerScriptId:'Environments.groovy'
-      ]
-    ],
-    [
-      $class: 'CascadeChoiceParameter',
-      choiceType: 'PT_SINGLE_SELECT',
-      name: 'Host',
-      referencedParameters: 'Environment',
-      script: [
-        $class: 'ScriptlerScript',
-        scriptlerScriptId:'HostsInEnv.groovy',
-        parameters: [
-          [name:'Environment', value: '$Environment']
-        ]
-      ]
-    ],
-    // New parameter for Offline Run options
-    [
-      $class: 'ChoiceParameter',
-      choiceType: 'PT_SINGLE_SELECT',
-      name: 'OfflineRun',
-      choices: ['SanityOffline Run', 'OfflineRun']
-    ]
-  ])
-])
-
 pipeline {
-  agent any
-  stages {
-    stage('Build') {
-      steps {
-        echo "${params.Environment}"
-        echo "${params.Host}"
-        echo "${params.OfflineRun}" // Access the newly added parameter
-      }
+    parameters {
+        activeChoice(
+            name: 'Offline Run',
+            script: {
+                return [
+                    [name: 'SanityRun', description: 'Run Sanity tests'],
+                    [name: 'OfflineRun', description: 'Full Offline Run']
+                ]
+            },
+            filterable: true, // Optional: enable filtering choices
+            multiselect: true  // Enable multi-selection
+        )
     }
-  }
+
+    // Pipeline stages and steps using the selected choices from 'Offline Run' parameter
+    stages {
+        stage('Build') {
+            steps {
+                echo "Selected Offline Run options:"
+                for (choice in params.OfflineRun) {
+                    echo "  - $choice"
+                }
+                // Script for your build based on the chosen offline run options
+            }
+        }
+    }
 }
+
